@@ -1,21 +1,17 @@
-"""
-Tests for the carray module.
+"""Tests for the carray module.
 
-Only the LongArray is tested. As the code in carray.pyx is auto-generated, tests
-for one class hould suffice.
+Only the LongArray is tested. As the code in carray.pyx is auto-generated,
+tests for one class hould suffice.
+
 """
 
 
 # standard imports
-try:
-    # This is for Python-2.6.x
-    import unittest2 as unittest
-except ImportError:
-    import unittest
+import unittest
 import numpy
 
 # local imports
-from pyzoltan.core.carray import LongArray, py_aligned
+from cyarray.carray import LongArray, py_aligned
 
 
 class TestAligned(unittest.TestCase):
@@ -462,7 +458,6 @@ class TestLongArray(unittest.TestCase):
         self.assertEqual(view.length, 3)
         expect = (numpy.arange(3)*10).tolist()
         self.assertListEqual(view.get_npy_array().tolist(), expect)
-
 
 
 if __name__ == '__main__':

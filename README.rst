@@ -4,7 +4,7 @@ CyArray: a typed, re-sizable Cython array
 The CyArray package provides a fast, typed, re-sizable, Cython array.
 
 It currently provides the following arrays: ``IntArray, UIntArray, LongArray,
-FloatArray, DubleArray``.
+FloatArray, DoubleArray``.
 
 All arrays provide for the following operations:
 
