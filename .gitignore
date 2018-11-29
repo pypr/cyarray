@@ -1,0 +1,9 @@
+*.pyc
+*.o
+*.c
+*.cpp
+*~
+*.so
+build/
+dist/
+cyarray.egg-info/

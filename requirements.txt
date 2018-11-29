@@ -1,0 +1,5 @@
+Cython>=0.20
+setuptools>=6.0
+numpy
+mako
+pytest

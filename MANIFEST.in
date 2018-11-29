@@ -1,0 +1,3 @@
+include MANIFEST.in Makefile *.py *.rst *.yml
+recursive-exclude cyarray *.cpp
+recursive-include cyarray *.pxd *.h *.mako
