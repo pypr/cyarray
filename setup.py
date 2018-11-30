@@ -108,7 +108,7 @@ def setup_package():
             compiler_directives=COMPILER_DIRECTIVES,
         )
 
-    setup(name='CyArray',
+    setup(name='cyarray',
           version=info['__version__'],
           author='Cyarray Developers',
           author_email='pysph-dev@googlegroups.com',
