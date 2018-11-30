@@ -1,7 +1,8 @@
 # This file (carray.pxd) has been generated automatically.
 # DO NOT modify this file
 # To make changes modify the source templates (carray.pxd.mako) and regenerate
-#cython: embedsignature=True
+# distutils: language=c++
+# cython: embedsignature=True
 """
 Implementation of resizeable arrays of different types in Cython.
 

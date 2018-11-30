@@ -43,7 +43,6 @@ def get_basic_extensions():
             name="cyarray.carray",
             sources=["cyarray/carray.pyx"],
             include_dirs=include_dirs,
-            language="c++"
         ),
     ]
     return ext_modules
@@ -104,7 +103,6 @@ def setup_package():
         ext_modules = cythonize(
             ext_modules, compile_time_env=compile_env,
             include_path=list(include_path),
-            language="c++",
             compiler_directives=COMPILER_DIRECTIVES,
         )
 
