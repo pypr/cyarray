@@ -1,4 +1,4 @@
-CyArray: a typed, re-sizable Cython array
+cyarray: a typed, re-sizable Cython array
 ------------------------------------------
 
 |Travis Status| |Appveyor Status|
@@ -9,7 +9,7 @@ CyArray: a typed, re-sizable Cython array
 .. |Appveyor Status| image:: https://ci.appveyor.com/api/projects/status/rbl358nj2876dap1?svg=true
    :target: https://ci.appveyor.com/project/prabhuramachandran/cyarray
 
-The CyArray package provides a fast, typed, re-sizable, Cython array.
+The cyarray package provides a fast, typed, re-sizable, Cython array.
 
 It currently provides the following arrays: ``IntArray, UIntArray, LongArray,
 FloatArray, DoubleArray``.
@@ -41,7 +41,7 @@ The numpy array may however be copied and used in any manner.
 Installation
 ------------
 
-CyArray can be installed using pip_::
+cyarray can be installed using pip_::
 
   $ pip install cyarray
 
