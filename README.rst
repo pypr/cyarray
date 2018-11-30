@@ -8,12 +8,12 @@ FloatArray, DoubleArray``.
 
 All arrays provide for the following operations:
 
- - access by indexing.
- - access through get/set function.
- - resizing the array.
- - appending values at the end of the array.
- - reserving space for future appends.
- - access to internal data through a numpy array.
+- access by indexing.
+- access through get/set function.
+- resizing the array.
+- appending values at the end of the array.
+- reserving space for future appends.
+- access to internal data through a numpy array.
 
 If you are writing Cython code this is a convenient array to use as it exposes
 the raw underlying pointer to the data. For example if you use a ``FloatArray``
@@ -24,9 +24,9 @@ This is done through the ``get_npy_array`` function. The returned numpy
 array can be used just like any other numpy array but for the following
 restrictions:
 
- - the array may not be resized.
- - references of this array should not be kept.
- - slices of this array may not be made.
+- the array may not be resized.
+- references of this array should not be kept.
+- slices of this array may not be made.
 
 The numpy array may however be copied and used in any manner.
 
