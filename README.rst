@@ -1,11 +1,13 @@
 CyArray: a typed, re-sizable Cython array
 ------------------------------------------
 
-|Travis Status|
+|Travis Status| |Appveyor Status|
 
 
 .. |Travis Status| image:: https://travis-ci.org/pypr/cyarray.svg?branch=master
     :target: https://travis-ci.org/pypr/cyarray
+.. |Appveyor Status| image:: https://ci.appveyor.com/api/projects/status/rbl358nj2876dap1?svg=true
+   :target: https://ci.appveyor.com/project/prabhuramachandran/cyarray
 
 The CyArray package provides a fast, typed, re-sizable, Cython array.
 
