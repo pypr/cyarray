@@ -10,4 +10,4 @@ install:
 
 # command to run tests
 script:
-  - pytest -v
+  - pytest -v --pyargs cyarray
