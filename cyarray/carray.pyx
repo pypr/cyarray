@@ -229,7 +229,7 @@ cdef class BaseArray:
         """
         raise NotImplementedError, 'BaseArray::reset'
 
-    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1):
+    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1, int start=0):
         """Copy values of indexed particles from self to dest.
         """
         raise NotImplementedError, 'BaseArray::copy_values'
@@ -656,7 +656,7 @@ cdef class IntArray(BaseArray):
         for i in range(len):
             self.append(in_array[i])
 
-    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1):
+    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1, int start=0):
         """Copies values of indices in indices from self to `dest`.
 
         No size check if performed, we assume the dest to of proper size
@@ -669,11 +669,11 @@ cdef class IntArray(BaseArray):
 
         if stride == 1:
             for i in range(num_values):
-                dest_array.data[i] = self.data[indices.data[i]]
+                dest_array.data[start + i] = self.data[indices.data[i]]
         else:
             for i in range(num_values):
                 for j in range(stride):
-                    dest_array.data[i*stride + j] = self.data[indices.data[i]*stride + j]
+                    dest_array.data[start + i*stride + j] = self.data[indices.data[i]*stride + j]
 
     cpdef copy_subset(self, BaseArray source, long start_index=-1,
                       long end_index=-1, int stride=1):
@@ -1161,7 +1161,7 @@ cdef class UIntArray(BaseArray):
         for i in range(len):
             self.append(in_array[i])
 
-    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1):
+    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1, int start=0):
         """Copies values of indices in indices from self to `dest`.
 
         No size check if performed, we assume the dest to of proper size
@@ -1174,11 +1174,11 @@ cdef class UIntArray(BaseArray):
 
         if stride == 1:
             for i in range(num_values):
-                dest_array.data[i] = self.data[indices.data[i]]
+                dest_array.data[start + i] = self.data[indices.data[i]]
         else:
             for i in range(num_values):
                 for j in range(stride):
-                    dest_array.data[i*stride + j] = self.data[indices.data[i]*stride + j]
+                    dest_array.data[start + i*stride + j] = self.data[indices.data[i]*stride + j]
 
     cpdef copy_subset(self, BaseArray source, long start_index=-1,
                       long end_index=-1, int stride=1):
@@ -1666,7 +1666,7 @@ cdef class LongArray(BaseArray):
         for i in range(len):
             self.append(in_array[i])
 
-    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1):
+    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1, int start=0):
         """Copies values of indices in indices from self to `dest`.
 
         No size check if performed, we assume the dest to of proper size
@@ -1679,11 +1679,11 @@ cdef class LongArray(BaseArray):
 
         if stride == 1:
             for i in range(num_values):
-                dest_array.data[i] = self.data[indices.data[i]]
+                dest_array.data[start + i] = self.data[indices.data[i]]
         else:
             for i in range(num_values):
                 for j in range(stride):
-                    dest_array.data[i*stride + j] = self.data[indices.data[i]*stride + j]
+                    dest_array.data[start + i*stride + j] = self.data[indices.data[i]*stride + j]
 
     cpdef copy_subset(self, BaseArray source, long start_index=-1,
                       long end_index=-1, int stride=1):
@@ -2171,7 +2171,7 @@ cdef class FloatArray(BaseArray):
         for i in range(len):
             self.append(in_array[i])
 
-    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1):
+    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1, int start=0):
         """Copies values of indices in indices from self to `dest`.
 
         No size check if performed, we assume the dest to of proper size
@@ -2184,11 +2184,11 @@ cdef class FloatArray(BaseArray):
 
         if stride == 1:
             for i in range(num_values):
-                dest_array.data[i] = self.data[indices.data[i]]
+                dest_array.data[start + i] = self.data[indices.data[i]]
         else:
             for i in range(num_values):
                 for j in range(stride):
-                    dest_array.data[i*stride + j] = self.data[indices.data[i]*stride + j]
+                    dest_array.data[start + i*stride + j] = self.data[indices.data[i]*stride + j]
 
     cpdef copy_subset(self, BaseArray source, long start_index=-1,
                       long end_index=-1, int stride=1):
@@ -2676,7 +2676,7 @@ cdef class DoubleArray(BaseArray):
         for i in range(len):
             self.append(in_array[i])
 
-    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1):
+    cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1, int start=0):
         """Copies values of indices in indices from self to `dest`.
 
         No size check if performed, we assume the dest to of proper size
@@ -2689,11 +2689,11 @@ cdef class DoubleArray(BaseArray):
 
         if stride == 1:
             for i in range(num_values):
-                dest_array.data[i] = self.data[indices.data[i]]
+                dest_array.data[start + i] = self.data[indices.data[i]]
         else:
             for i in range(num_values):
                 for j in range(stride):
-                    dest_array.data[i*stride + j] = self.data[indices.data[i]*stride + j]
+                    dest_array.data[start + i*stride + j] = self.data[indices.data[i]*stride + j]
 
     cpdef copy_subset(self, BaseArray source, long start_index=-1,
                       long end_index=-1, int stride=1):
