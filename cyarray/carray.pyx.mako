@@ -118,9 +118,10 @@ cdef void* _aligned_realloc(void *existing, size_t bytes, size_t old_size) nogil
 
     """
     cdef void* result = _aligned_malloc(bytes)
+    cdef size_t copy_size = min(bytes, old_size)
 
     # Copy everything from the old to the new and free the old.
-    memcpy(<void*>result, <void*>existing, old_size)
+    memcpy(<void*>result, <void*>existing, copy_size)
     aligned_free(<void*>existing)
 
     return result
