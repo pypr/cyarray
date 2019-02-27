@@ -147,9 +147,6 @@ class TestLongArray(unittest.TestCase):
         self.assertRaises(ValueError, la.set_data, numpy.arange(10))
 
     def test_squeeze(self):
-        """
-        Tests the squeeze function.
-        """
         la = LongArray(5)
         la.append(4)
 
@@ -173,6 +170,21 @@ class TestLongArray(unittest.TestCase):
         self.assertEqual(len(la.get_npy_array()), 0)
         self.assertEqual(la.alloc >= la.length, True)
         del la  # This should work and not segfault.
+
+    def test_squeeze_large_array_should_not_segfault(self):
+        # Given
+        la = LongArray(10)
+        la.set_data(numpy.zeros(10, dtype=int))
+        la.reserve(100000)
+
+        # When
+        la.squeeze()
+        la.reserve(1000)
+
+        # Then
+        self.assertEqual(la.length, 10)
+        numpy.testing.assert_array_almost_equal(la.get_npy_array(), 0)
+        self.assertEqual(la.alloc >= la.length, True)
 
     def test_reset(self):
         """

@@ -45,7 +45,7 @@ logger = logging.getLogger()
 
 # 'importing' some Numpy C-api functions.
 cdef extern from "numpy/arrayobject.h":
-    cdef void  import_array()
+    cdef void  _import_array()
 
     ctypedef struct PyArrayObject:
         char  *data
@@ -66,7 +66,7 @@ cdef extern from "stdlib.h":
      void *memcpy(void *dst, void *src, long n) nogil
 
 # numpy module initialization call
-import_array()
+_import_array()
 
 cdef inline long aligned(long n, int item_size) nogil:
     """Align `n` items each having size (in bytes) `item_size` to
@@ -110,9 +110,10 @@ cdef void* _aligned_realloc(void *existing, size_t bytes, size_t old_size) nogil
 
     """
     cdef void* result = _aligned_malloc(bytes)
+    cdef size_t copy_size = min(bytes, old_size)
 
     # Copy everything from the old to the new and free the old.
-    memcpy(<void*>result, <void*>existing, old_size)
+    memcpy(<void*>result, <void*>existing, copy_size)
     aligned_free(<void*>existing)
 
     return result
