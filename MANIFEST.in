@@ -1,4 +1,4 @@
-include MANIFEST.in Makefile *.py *.rst *.yml
+include MANIFEST.in Makefile *.py *.rst *.yml *.toml
 recursive-exclude cyarray *.cpp
 recursive-include cyarray *.pxd *.h *.mako
 recursive-include docs *.*
