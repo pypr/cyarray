@@ -87,9 +87,11 @@ def setup_package():
 
     # The requirements.
     install_requires = [
-        'numpy', 'mako', 'Cython>=0.20', 'setuptools>=6.0',
-        'pytest>=3.0'
+        'numpy', 'mako', 'Cython>=0.20', 'setuptools>=6.0'
     ]
+    tests_require = ["pytest"]
+    docs_require = ["sphinx"]
+
     ext_modules = get_basic_extensions()
     if MODE != 'info' and _is_cythonize_default():
         # Cython >= 0.25 uses cythonize to compile the extensions. This
@@ -115,8 +117,6 @@ def setup_package():
           url='http://github.com/pypr/cyarray',
           license="BSD",
           keywords="Cython array resizable",
-          setup_requires=['pytest-runner'],
-          tests_require=['pytest'],
           packages=find_packages(),
           package_data={
               '': ['*.pxd', '*.mako', '*.rst']
@@ -129,6 +129,11 @@ def setup_package():
           include_package_data=True,
           cmdclass=cmdclass,
           install_requires=install_requires,
+          extras_require={
+              "docs": docs_require,
+              "tests": tests_require,
+              "dev": docs_require + tests_require,
+          },
           zip_safe=False,
           platforms=['Linux', 'Mac OS-X', 'Unix', 'Windows'],
           classifiers=[c.strip() for c in """\
