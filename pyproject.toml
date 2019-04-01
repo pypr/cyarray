@@ -1,2 +1,0 @@
-[build-system]
-requires = ['Cython>=0.20', 'numpy', 'mako', 'setuptools', 'wheel']
