@@ -4,7 +4,12 @@ python:
   - "3.7"
   - "3.8"
 
+arch:
+  - ppc64le
+  - amd64
 # command to install dependencies
+before_install:
+  - sudo chown -Rvf $USER:$GROUP ~/.cache/pip/wheels
 install:
   - pip install -r requirements.txt
   - python setup.py install
