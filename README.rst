@@ -1,13 +1,12 @@
 cyarray: a typed, re-sizable Cython array
 ------------------------------------------
 
-|Travis Status| |Appveyor Status| |Documentation Status|
+|CI Status|  |Documentation Status|
 
 
-.. |Travis Status| image:: https://travis-ci.org/pypr/cyarray.svg?branch=master
-    :target: https://travis-ci.org/pypr/cyarray
-.. |Appveyor Status| image:: https://ci.appveyor.com/api/projects/status/rbl358nj2876dap1?svg=true
-    :target: https://ci.appveyor.com/project/prabhuramachandran/cyarray
+.. |CI Status| image:: https://github.com/pypr/cyarray/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/pypr/automan/actions/workflows/tests.yml
+
 .. |Documentation Status| image:: https://readthedocs.org/projects/cyarray/badge/?version=latest
     :target: https://cyarray.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
