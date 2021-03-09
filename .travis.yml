@@ -6,7 +6,7 @@ python:
 
 arch:
   - ppc64le
-  - amd64
+  
 # command to install dependencies
 before_install:
   - sudo chown -Rvf $USER:$GROUP ~/.cache/pip/wheels
