@@ -5,7 +5,7 @@ cyarray: a typed, re-sizable Cython array
 
 
 .. |CI Status| image:: https://github.com/pypr/cyarray/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/pypr/automan/actions/workflows/tests.yml
+    :target: https://github.com/pypr/cyarray/actions/workflows/tests.yml
 
 .. |Documentation Status| image:: https://readthedocs.org/projects/cyarray/badge/?version=latest
     :target: https://cyarray.readthedocs.io/en/latest/?badge=latest
