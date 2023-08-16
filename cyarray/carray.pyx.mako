@@ -10,7 +10,7 @@ type_info = [
 # DO NOT modify this file
 # To make changes modify the source templates (carray.pxd.mako) and regenerate
 # distutils: language=c++
-# cython: embedsignature=True
+# cython: embedsignature=True, language_level=3
 """
 Implementation of resizeable arrays of different types in Cython.
 

@@ -1,6 +1,7 @@
 # This file (carray.pxd) has been generated automatically.
 # DO NOT modify this file
 # To make changes modify the source templates (carray.pxd.mako) and regenerate
+#cython: language_level=3
 """
 Implementation of resizeable arrays of different types in Cython.
 
