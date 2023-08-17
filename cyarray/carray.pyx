@@ -77,9 +77,9 @@ cdef inline long aligned(long n, int item_size) nogil:
         return n
     else:
         if 64%item_size == 0:
-            return (n*item_size/64 + 1)*64/item_size
+            return (n*item_size//64 + 1)*64//item_size
         else:
-            return (n*item_size/64 + 1)*64
+            return (n*item_size//64 + 1)*64
 
 cpdef long py_aligned(long n, int item_size):
     """Align `n` items each having size (in bytes) `item_size` to
