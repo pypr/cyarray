@@ -224,22 +224,22 @@ class TestLongArray(unittest.TestCase):
         l1 = LongArray(10)
         l1.set_data(numpy.arange(10))
         rem = [0, 4, 3]
-        l1.remove(numpy.array(rem, dtype=numpy.int))
+        l1.remove(numpy.array(rem, dtype=int))
         self.assertEqual(l1.length, 7)
         self.assertEqual(numpy.allclose([7, 1, 2, 8, 9, 5, 6],
                                         l1.get_npy_array()), True)
 
-        l1.remove(numpy.array(rem, dtype=numpy.int))
+        l1.remove(numpy.array(rem, dtype=int))
         self.assertEqual(l1.length, 4)
         self.assertEqual(numpy.allclose(
             [6, 1, 2, 5], l1.get_npy_array()), True)
 
         rem = [0, 1, 3]
-        l1.remove(numpy.array(rem, dtype=numpy.int))
+        l1.remove(numpy.array(rem, dtype=int))
         self.assertEqual(l1.length, 1)
         self.assertEqual(numpy.allclose([2], l1.get_npy_array()), True)
 
-        l1.remove(numpy.array([0], dtype=numpy.int))
+        l1.remove(numpy.array([0], dtype=int))
         self.assertEqual(l1.length, 0)
         self.assertEqual(len(l1.get_npy_array()), 0)
 
@@ -250,7 +250,7 @@ class TestLongArray(unittest.TestCase):
 
         # When
         rem = [3, 1]
-        l1.remove(numpy.array(rem, dtype=numpy.int), stride=3)
+        l1.remove(numpy.array(rem, dtype=int), stride=3)
 
         # Then
         self.assertEqual(l1.length, 6)
@@ -263,7 +263,7 @@ class TestLongArray(unittest.TestCase):
 
         # When
         rem = [0, 2]
-        l1.remove(numpy.array(rem, dtype=numpy.int), stride=3)
+        l1.remove(numpy.array(rem, dtype=int), stride=3)
 
         # Then
         self.assertEqual(l1.length, 6)
