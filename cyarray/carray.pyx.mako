@@ -10,7 +10,7 @@ type_info = [
 # DO NOT modify this file
 # To make changes modify the source templates (carray.pxd.mako) and regenerate
 # distutils: language=c++
-# cython: embedsignature=True
+# cython: embedsignature=True, language_level=3
 """
 Implementation of resizeable arrays of different types in Cython.
 
@@ -73,6 +73,18 @@ cdef extern from "numpy/arrayobject.h":
 cdef extern from "stdlib.h":
      void *memcpy(void *dst, void *src, long n) nogil
 
+
+# Cython>= 3.0 now disallows relpacing the guts of a numpy array.
+# Workaround: Thanks https://github.com/rainwoodman/pandas/blob/05d3fe2402e4563124e7060837ded7513ab5bca7/pandas/_libs/reduction.pyx#L27 # noqa: E501
+# FIXME: FIND A CLEANER SOLUTION
+cdef extern from *:
+    """
+    static void PyArray_SET_DATA(PyArrayObject *arr, char * data) {
+        arr->data = data;
+    }
+    """
+    void PyArray_SET_DATA(np.ndarray arr, char * data) nogil
+
 # numpy module initialization call
 _import_array()
 
@@ -85,9 +97,9 @@ cdef inline long aligned(long n, int item_size) nogil:
         return n
     else:
         if 64%item_size == 0:
-            return (n*item_size/64 + 1)*64/item_size
+            return (n*item_size//64 + 1)*64//item_size
         else:
-            return (n*item_size/64 + 1)*64
+            return (n*item_size//64 + 1)*64
 
 cpdef long py_aligned(long n, int item_size):
     """Align `n` items each having size (in bytes) `item_size` to
@@ -463,7 +475,7 @@ cdef class ${CLASSNAME}(BaseArray):
         if self._old_data != NULL:
             self.data = self._old_data
             self._old_data = NULL
-            self._npy_array.data = <char *>self.data
+            PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_resize(self, long size) nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
