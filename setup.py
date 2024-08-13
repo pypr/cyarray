@@ -89,7 +89,7 @@ def setup_package():
     install_requires = [
         'numpy', 'mako', 'Cython<3.0', 'setuptools>=6.0'
     ]
-    tests_require = ["pytest"]
+    tests_require = ["pytest", "pytest-benchmark[histogram]"]
     docs_require = ["sphinx"]
 
     ext_modules = get_basic_extensions()

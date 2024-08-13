@@ -3,3 +3,4 @@ setuptools>=6.0
 numpy
 mako
 pytest
+pytest-benchmark[histogram]

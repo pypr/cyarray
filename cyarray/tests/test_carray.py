@@ -5,10 +5,10 @@ tests for one class hould suffice.
 
 """
 
-
 # standard imports
 import unittest
 import numpy
+import pytest
 
 # local imports
 from cyarray.carray import LongArray, py_aligned
@@ -505,6 +505,349 @@ class TestLongArray(unittest.TestCase):
         # Then.
         self.assertEqual(view.length, 3)
         expect = (numpy.arange(3) * 10).tolist()
+        self.assertListEqual(view.get_npy_array().tolist(), expect)
+
+
+class BenchmarkLongArray(unittest.TestCase):
+    """
+    Tests for the LongArray class.
+    """
+
+    @pytest.fixture(autouse=True)
+    def setupBenchmark(self, benchmark):
+        self.benchmark = benchmark
+
+    def test_constructor(self):
+        """
+        Test the constructor.
+        """
+        n = numpy.random.randint(low=10, high=100)
+        la = self.benchmark(LongArray, n)
+
+        self.assertEqual(la.length, n)
+        self.assertEqual(la.alloc, n)
+        self.assertEqual(len(la.get_npy_array()), n)
+
+    def test_set_indexing(self):
+        n = 100
+        lab = LongArray(n)
+        self.benchmark.pedantic(lab.set, args=(9, n))
+        self.assertEqual(lab[9], n)
+
+    def test_get_indexing(self):
+        la = LongArray(100)
+        la[98] = 15
+        res = self.benchmark(la.get, 98)
+        self.assertEqual(res, 15)
+
+    def test_append(self):
+        lab = LongArray(0)
+        n = 100
+        self.benchmark(lab.append, n)
+        self.assertEqual(lab[0], n)
+
+    def test_reserve(self):
+        """
+        Tests the reserve function.
+        """
+
+        def breserve(n):
+            la = LongArray(0)
+            la.reserve(n)
+            return la
+
+        n = 100
+        la = self.benchmark(breserve, n)
+        self.assertEqual(la.alloc, n)
+
+    def test_resize(self):
+        """
+        Tests the resize function.
+        """
+
+        def bresize(lab):
+            n = numpy.random.randint(low=10, high=20)
+            lab.resize(n)
+            return lab, n
+
+        la = LongArray(10)
+        la, n = self.benchmark(bresize, la)
+        self.assertEqual(la.length, n)
+
+    def test_get_npy_array(self):
+        la = LongArray(100)
+        la[0] = 1
+        la[1] = 2
+        la[2] = 3
+
+        nparray = self.benchmark(la.get_npy_array)
+        for i in range(3):
+            self.assertEqual(nparray[0], la[0])
+
+    def test_set_data(self):
+        """
+        Tests the set_data function.
+        """
+        n = 50
+        la = LongArray(n)
+        np = numpy.arange(n)
+        self.benchmark(la.set_data, np)
+
+        for i in range(n):
+            self.assertEqual(la[i], np[i])
+
+        self.assertRaises(ValueError, la.set_data, numpy.arange(55))
+
+    def test_squeeze(self):
+
+        def bsqueeze():
+            lab = LongArray(5)
+            lab.append(4)
+            lab.squeeze()
+            return lab
+
+        la = self.benchmark(bsqueeze)
+
+        self.assertEqual(la.length, 6)
+        self.assertEqual(la.alloc >= la.length, True)
+        self.assertEqual(len(la.get_npy_array()), 6)
+
+    def test_reset(self):
+        def breset():
+            lab = LongArray(5)
+            lab.reset()
+            return lab
+
+        la = self.benchmark(breset)
+
+        self.assertEqual(la.length, 0)
+        self.assertEqual(la.alloc, 5)
+        self.assertEqual(len(la.get_npy_array()), 0)
+
+    def test_extend(self):
+        l2 = LongArray(5)
+
+        for i in range(5):
+            l2[i] = 5 + i
+
+        def bextend(l2n):
+            l1b = LongArray(0)
+            l1b.extend(l2n.get_npy_array())
+            return l1b
+
+        l1 = self.benchmark(bextend, l2)
+
+        self.assertEqual(l1.length, 5)
+        self.assertEqual(
+            numpy.allclose(
+                l1.get_npy_array(),
+                numpy.arange(5, 10)),
+            True)
+
+    def test_remove(self):
+
+        def bremove(rem):
+            l1b = LongArray(10)
+            l1b.set_data(numpy.arange(10))
+            l1b.remove(rem)
+            return l1b
+
+        rem = [0, 4, 3]
+        l1 = self.benchmark(bremove, numpy.array(rem, dtype=int))
+
+        self.assertEqual(l1.length, 7)
+        self.assertEqual(numpy.allclose([7, 1, 2, 8, 9, 5, 6],
+                                        l1.get_npy_array()), True)
+
+    def test_remove_with_strides(self):
+
+        def bremove(rem):
+            l1b = LongArray(12)
+            l1b.set_data(numpy.arange(12))
+            l1b.remove(rem, stride=3)
+            return l1b
+
+        rem = [3, 1]
+        l1 = self.benchmark(bremove, numpy.array(rem, dtype=int))
+
+        # Then
+        self.assertEqual(l1.length, 6)
+        self.assertEqual(numpy.allclose([0, 1, 2, 6, 7, 8],
+                                        l1.get_npy_array()), True)
+
+        # Given
+        l1 = LongArray(12)
+        l1.set_data(numpy.arange(12))
+
+        # When
+        rem = [0, 2]
+        l1.remove(numpy.array(rem, dtype=int), stride=3)
+
+        # Then
+        self.assertEqual(l1.length, 6)
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        self.assertEqual(numpy.allclose([9, 10, 11, 3, 4, 5],
+                                        l1.get_npy_array()), True)
+
+    def test_align_array(self):
+        l1 = LongArray(10)
+        l1.set_data(numpy.arange(10))
+
+        new_indices = LongArray(10)
+        new_indices.set_data(numpy.asarray([1, 5, 3, 2, 4, 7, 8, 6, 9, 0]))
+
+        l1.align_array(new_indices)
+        self.assertEqual(numpy.allclose([1, 5, 3, 2, 4, 7, 8, 6, 9, 0],
+                                        l1.get_npy_array()), True)
+
+        # Test case with strides.
+
+        def balign_array():
+            l1b = LongArray(6)
+            l1b.set_data(numpy.arange(6))
+
+            new_indices = LongArray(3)
+            new_indices.set_data(numpy.asarray([2, 1, 0]))
+            l1b.align_array(new_indices, 2)
+            return l1b
+
+        l1 = self.benchmark(balign_array)
+        self.assertEqual(numpy.allclose([4, 5, 2, 3, 0, 1],
+                                        l1.get_npy_array()), True)
+
+    def test_copy_subset(self):
+
+        def bcopy_subset(l2b):
+            l1b = LongArray(10)
+            l1b.set_data(numpy.arange(10))
+
+            # a valid copy.
+            l1b.copy_subset(l2b, 5, 9)
+            return l1b
+
+        l2 = LongArray(4)
+        l2[0] = 4
+        l2[1] = 3
+        l2[2] = 2
+        l2[3] = 1
+
+        l1 = self.benchmark(bcopy_subset, l2)
+
+        self.assertEqual(numpy.allclose([0, 1, 2, 3, 4, 4, 3, 2, 1, 9],
+                                        l1.get_npy_array()), True)
+
+    def test_copy_subset_works_with_strides(self):
+        def bcopy_subset(l2b):
+            l1b = LongArray(8)
+            l1b.set_data(numpy.arange(8))
+            l1b.copy_subset(l2b, 2, 3, stride=2)
+            return l1b
+
+        # Given
+        l2 = LongArray(4)
+        l2.set_data(numpy.arange(10, 14))
+
+        # When
+        l1 = self.benchmark(bcopy_subset, l2)
+
+        # Then
+        numpy.testing.assert_array_equal(
+            l1.get_npy_array(),
+            [0, 1, 2, 3, 10, 11, 6, 7]
+        )
+
+    def test_copy_values(self):
+        def bcopy_values(l2b, indices):
+            l1b = LongArray(8)
+            l1b.set_data(numpy.arange(8))
+            l1b.copy_values(indices, l2b)
+            return l1b
+
+        # Given
+        l1 = LongArray(8)
+        l1.set_data(numpy.arange(8))
+        l2 = LongArray(8)
+        l2.set_data(numpy.zeros(8, dtype=int))
+
+        # When
+        indices = LongArray(3)
+        indices.set_data(numpy.array([2, 4, 6]))
+        l1 = self.benchmark.pedantic(bcopy_values, args=(l2, indices))
+
+        # Then
+        numpy.testing.assert_array_equal(
+            l2.get_npy_array(),
+            [2, 4, 6] + [0] * 5
+        )
+
+    def test_update_min_max(self):
+        """
+        Tests the update_min_max function.
+        """
+
+        def bupdate_min_max():
+            l1b = LongArray(10)
+            l1b.set_data(numpy.arange(10))
+            l1b.update_min_max()
+            return l1b
+
+        l1 = self.benchmark(bupdate_min_max)
+
+        self.assertEqual(l1.minimum, 0)
+        self.assertEqual(l1.maximum, 9)
+
+    def test_pickling(self):
+        """
+        Tests the __reduce__ and __setstate__ functions.
+        """
+        import pickle
+
+        def bpickle(l1b):
+            l1_dump = pickle.dumps(l1b)
+            return pickle.loads(l1_dump)
+
+        l1 = LongArray(3)
+        l1.set_data(numpy.arange(3))
+
+        l1_load = self.benchmark(bpickle, l1)
+        self.assertEqual(
+            (l1_load.get_npy_array() == l1.get_npy_array()).all(), True)
+
+    def test_set_view(self):
+        # Given
+        src = LongArray()
+        src.extend(numpy.arange(5))
+
+        # When.
+        def bset_view(bsrc):
+            bview = LongArray()
+            bview.set_view(bsrc, 1, 4)
+            return bview
+
+        view = self.benchmark(bset_view, src)
+
+        # Then.
+        self.assertEqual(view.length, 3)
+        expect = list(range(1, 4))
+        self.assertListEqual(view.get_npy_array().tolist(), expect)
+
+    def test_set_view_for_empty_array(self):
+        # Given
+        src = LongArray()
+        src.extend(numpy.arange(5))
+
+        # When.
+
+        def bset_view(bsrc):
+            view = LongArray()
+            view.set_view(bsrc, 1, 1)
+            return view
+
+        view = self.benchmark(bset_view, src)
+
+        # Then.
+        self.assertEqual(view.length, 0)
+        expect = []
         self.assertListEqual(view.get_npy_array().tolist(), expect)
 
 
