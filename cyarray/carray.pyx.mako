@@ -1,4 +1,5 @@
 <%
+import platform
 type_info = [
     ('int', 'IntArray', 'NPY_INT'),
     ('unsigned int', 'UIntArray', 'NPY_UINT'),
@@ -37,11 +38,8 @@ The numpy array may however be copied and used in any manner.
 
 # For malloc etc.
 from libc.stdlib cimport *
-IF UNAME_SYSNAME == "Windows":
-    cdef extern from "msstdint.h" nogil:
-        ctypedef unsigned int uintptr_t
-ELSE:
-    from libc.stdint cimport uintptr_t
+
+from libc.stdint cimport uintptr_t
 
 cimport numpy as np
 
