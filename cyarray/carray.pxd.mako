@@ -20,10 +20,10 @@ Declaration File.
 # numpy import
 cimport numpy as np
 
-cdef long aligned(long n, int item_size) nogil
-cdef void* aligned_malloc(size_t bytes) nogil
-cdef void* aligned_realloc(void* existing, size_t bytes, size_t old_size) nogil
-cdef void aligned_free(void* p) nogil
+cdef long aligned(long n, int item_size) noexcept nogil
+cdef void* aligned_malloc(size_t bytes) noexcept nogil
+cdef void* aligned_realloc(void* existing, size_t bytes, size_t old_size) noexcept nogil
+cdef void aligned_free(void* p) noexcept nogil
 
 # forward declaration
 cdef class BaseArray
@@ -38,11 +38,11 @@ cdef class BaseArray:
     cdef public long length, alloc
     cdef np.ndarray _npy_array
 
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_reserve(self, long size) nogil
-    cdef void c_reset(self) nogil
-    cdef void c_resize(self, long size) nogil
-    cdef void c_squeeze(self) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_reserve(self, long size) noexcept nogil
+    cdef void c_reset(self) noexcept nogil
+    cdef void c_resize(self, long size) noexcept nogil
+    cdef void c_squeeze(self) noexcept nogil
 
     cpdef reserve(self, long size)
     cpdef resize(self, long size)
@@ -71,9 +71,9 @@ cdef class ${CLASSNAME}(BaseArray):
     cdef ${CLASSNAME} _parent
 
     cdef _setup_npy_array(self)
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_append(self, ${ARRAY_TYPE} value) nogil
-    cdef void c_set_view(self, ${ARRAY_TYPE} *array, long length) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_append(self, ${ARRAY_TYPE} value) noexcept nogil
+    cdef void c_set_view(self, ${ARRAY_TYPE} *array, long length) noexcept nogil
     cdef ${ARRAY_TYPE}* get_data_ptr(self)
 
     cpdef ${ARRAY_TYPE} get(self, long idx)
