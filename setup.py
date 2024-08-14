@@ -87,7 +87,7 @@ def setup_package():
 
     # The requirements.
     install_requires = [
-        'numpy', 'mako', 'Cython<3.0', 'setuptools>=6.0'
+        'numpy', 'mako', 'Cython', 'setuptools>=6.0'
     ]
     tests_require = ["pytest", "pytest-benchmark[histogram]"]
     docs_require = ["sphinx"]
