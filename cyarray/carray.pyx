@@ -62,6 +62,16 @@ cdef extern from "numpy/arrayobject.h":
 cdef extern from "stdlib.h":
      void *memcpy(void *dst, void *src, long n) nogil
 
+# Cython>= 3.0 now disallows replacing the guts of a numpy array.
+# Workaround: https://github.com/rainwoodman/pandas/blob/05d3fe2402e4563124e7060837ded7513ab5bca7/pandas/_libs/reduction.pyx#L27 # noqa: E501
+cdef extern from *:
+    """
+    static void PyArray_SET_DATA(PyArrayObject *arr, char * data) {
+        arr->data = data;
+    }
+    """
+    void PyArray_SET_DATA(np.ndarray arr, char * data) nogil
+
 # numpy module initialization call
 _import_array()
 
@@ -448,7 +458,7 @@ cdef class IntArray(BaseArray):
         if self._old_data != NULL:
             self.data = self._old_data
             self._old_data = NULL
-            self._npy_array.data = <char *>self.data
+            PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_resize(self, long size) nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
@@ -953,7 +963,7 @@ cdef class UIntArray(BaseArray):
         if self._old_data != NULL:
             self.data = self._old_data
             self._old_data = NULL
-            self._npy_array.data = <char *>self.data
+            PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_resize(self, long size) nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
@@ -1458,7 +1468,7 @@ cdef class LongArray(BaseArray):
         if self._old_data != NULL:
             self.data = self._old_data
             self._old_data = NULL
-            self._npy_array.data = <char *>self.data
+            PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_resize(self, long size) nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
@@ -1963,7 +1973,7 @@ cdef class FloatArray(BaseArray):
         if self._old_data != NULL:
             self.data = self._old_data
             self._old_data = NULL
-            self._npy_array.data = <char *>self.data
+            PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_resize(self, long size) nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
@@ -2468,7 +2478,7 @@ cdef class DoubleArray(BaseArray):
         if self._old_data != NULL:
             self.data = self._old_data
             self._old_data = NULL
-            self._npy_array.data = <char *>self.data
+            PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_resize(self, long size) nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
