@@ -159,7 +159,7 @@ cdef class BaseArray:
     cdef void c_reserve(self, long size) nogil:
         pass
 
-    cdef void c_reset(self) nogil:
+    cdef void c_reset(self):
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
         self.length = 0
         arr.dimensions[0] = self.length
@@ -456,12 +456,16 @@ cdef class ${CLASSNAME}(BaseArray):
             self.alloc = size
             arr.data = <char *>self.data
 
-    cdef void c_reset(self) nogil:
+    cdef void c_reset(self):
+        cdef np.npy_intp dims = self.length
         BaseArray.c_reset(self)
         if self._old_data != NULL:
             self.data = self._old_data
             self._old_data = NULL
-            self._npy_array.data = <char *>self.data
+
+            self._npy_array = PyArray_SimpleNewFromData(
+                1, &dims, ${NUMPY_TYPENAME}, self.data
+            )
 
     cdef void c_resize(self, long size) nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array

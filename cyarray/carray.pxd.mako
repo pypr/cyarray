@@ -40,7 +40,7 @@ cdef class BaseArray:
 
     cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
     cdef void c_reserve(self, long size) nogil
-    cdef void c_reset(self) nogil
+    cdef void c_reset(self)
     cdef void c_resize(self, long size) nogil
     cdef void c_squeeze(self) nogil
 
