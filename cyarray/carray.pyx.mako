@@ -74,7 +74,7 @@ cdef extern from "stdlib.h":
 # numpy module initialization call
 _import_array()
 
-cdef inline long aligned(long n, int item_size) nogil:
+cdef inline long aligned(long n, int item_size) noexcept nogil:
     """Align `n` items each having size (in bytes) `item_size` to
     64 bytes and return the appropriate number of items that would
     be aligned to 64 bytes.
@@ -133,13 +133,13 @@ cdef void* _deref_base(void* ptr) nogil:
             raise MemoryError("Passed pointer is not aligned.")
     return <void*>base
 
-cdef void* aligned_malloc(size_t bytes) nogil:
+cdef void* aligned_malloc(size_t bytes) noexcept nogil:
     return _aligned_malloc(bytes)
 
-cdef void* aligned_realloc(void* p, size_t bytes, size_t old_size) nogil:
+cdef void* aligned_realloc(void* p, size_t bytes, size_t old_size) noexcept nogil:
     return _aligned_realloc(p, bytes, old_size)
 
-cdef void aligned_free(void* p) nogil:
+cdef void aligned_free(void* p) noexcept nogil:
     """Free block allocated by alligned_malloc.
     """
     free(<void*>_deref_base(p))
@@ -156,7 +156,7 @@ cdef class BaseArray:
         """
         pass
 
-    cdef void c_reserve(self, long size) nogil:
+    cdef void c_reserve(self, long size) noexcept nogil:
         pass
 
     cdef void c_reset(self):
@@ -438,7 +438,7 @@ cdef class ${CLASSNAME}(BaseArray):
         # update the numpy arrays length
         arr.dimensions[0] = self.length
 
-    cdef void c_reserve(self, long size) nogil:
+    cdef void c_reserve(self, long size) noexcept nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
         cdef void* data = NULL
         if size > self.alloc:
