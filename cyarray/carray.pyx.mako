@@ -42,6 +42,7 @@ from libc.stdlib cimport *
 from libc.stdint cimport uintptr_t
 
 cimport numpy as np
+np.import_array()
 
 import numpy as np
 
