@@ -1,5 +1,6 @@
-Cython<3.0
+Cython
 setuptools>=6.0
 numpy
 mako
 pytest
+pytest-benchmark[histogram]

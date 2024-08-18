@@ -12,10 +12,10 @@ Declaration File.
 # numpy import
 cimport numpy as np
 
-cdef long aligned(long n, int item_size) nogil
-cdef void* aligned_malloc(size_t bytes) nogil
-cdef void* aligned_realloc(void* existing, size_t bytes, size_t old_size) nogil
-cdef void aligned_free(void* p) nogil
+cdef long aligned(long n, int item_size) noexcept nogil
+cdef void* aligned_malloc(size_t bytes) noexcept nogil
+cdef void* aligned_realloc(void* existing, size_t bytes, size_t old_size) noexcept nogil
+cdef void aligned_free(void* p) noexcept nogil
 
 # forward declaration
 cdef class BaseArray
@@ -30,11 +30,11 @@ cdef class BaseArray:
     cdef public long length, alloc
     cdef np.ndarray _npy_array
 
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_reserve(self, long size) nogil
-    cdef void c_reset(self) nogil
-    cdef void c_resize(self, long size) nogil
-    cdef void c_squeeze(self) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_reserve(self, long size) noexcept nogil
+    cdef void c_reset(self) noexcept nogil
+    cdef void c_resize(self, long size) noexcept nogil
+    cdef void c_squeeze(self) noexcept nogil
 
     cpdef reserve(self, long size)
     cpdef resize(self, long size)
@@ -62,9 +62,9 @@ cdef class IntArray(BaseArray):
     cdef IntArray _parent
 
     cdef _setup_npy_array(self)
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_append(self, int value) nogil
-    cdef void c_set_view(self, int *array, long length) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_append(self, int value) noexcept nogil
+    cdef void c_set_view(self, int *array, long length) noexcept nogil
     cdef int* get_data_ptr(self)
 
     cpdef int get(self, long idx)
@@ -92,9 +92,9 @@ cdef class UIntArray(BaseArray):
     cdef UIntArray _parent
 
     cdef _setup_npy_array(self)
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_append(self, unsigned int value) nogil
-    cdef void c_set_view(self, unsigned int *array, long length) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_append(self, unsigned int value) noexcept nogil
+    cdef void c_set_view(self, unsigned int *array, long length) noexcept nogil
     cdef unsigned int* get_data_ptr(self)
 
     cpdef unsigned int get(self, long idx)
@@ -122,9 +122,9 @@ cdef class LongArray(BaseArray):
     cdef LongArray _parent
 
     cdef _setup_npy_array(self)
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_append(self, long value) nogil
-    cdef void c_set_view(self, long *array, long length) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_append(self, long value) noexcept nogil
+    cdef void c_set_view(self, long *array, long length) noexcept nogil
     cdef long* get_data_ptr(self)
 
     cpdef long get(self, long idx)
@@ -152,9 +152,9 @@ cdef class FloatArray(BaseArray):
     cdef FloatArray _parent
 
     cdef _setup_npy_array(self)
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_append(self, float value) nogil
-    cdef void c_set_view(self, float *array, long length) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_append(self, float value) noexcept nogil
+    cdef void c_set_view(self, float *array, long length) noexcept nogil
     cdef float* get_data_ptr(self)
 
     cpdef float get(self, long idx)
@@ -182,9 +182,9 @@ cdef class DoubleArray(BaseArray):
     cdef DoubleArray _parent
 
     cdef _setup_npy_array(self)
-    cdef void c_align_array(self, LongArray new_indices, int stride=*) nogil
-    cdef void c_append(self, double value) nogil
-    cdef void c_set_view(self, double *array, long length) nogil
+    cdef void c_align_array(self, LongArray new_indices, int stride=*) noexcept nogil
+    cdef void c_append(self, double value) noexcept nogil
+    cdef void c_set_view(self, double *array, long length) noexcept nogil
     cdef double* get_data_ptr(self)
 
     cpdef double get(self, long idx)

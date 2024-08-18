@@ -23,4 +23,13 @@ jobs:
           python -m pip install -r requirements.txt
           pip install .
       - name: Run tests
-        run: pytest -v --pyargs cyarray
+        run: pytest -v --pyargs cyarray --benchmark-save benchmark-stats --benchmark-json benchmark-full.json --benchmark-histogram
+
+      - name: 'Upload Perf Data'
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-bench-result-${{ matrix.python-version }}-${{ matrix.os }}
+          path: |
+            benchmark_*.svg
+            .benchmarks/*
+            benchmark-full.json
