@@ -223,7 +223,7 @@ cdef class BaseArray:
         elif s_dims[0] <= d_dims[0]:
             self._npy_array[:s_dims[0]] = nparr
         else:
-            raise ValueError, 'array size mismatch'
+            raise ValueError('array size mismatch')
 
     cpdef squeeze(self):
         """Release any unused memory.

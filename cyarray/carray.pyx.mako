@@ -192,17 +192,17 @@ cdef class BaseArray:
     cpdef str get_c_type(self):
         """Return the c data type of this array.
         """
-        raise NotImplementedError, 'BaseArray::get_c_type'
+        raise NotImplementedError('BaseArray::get_c_type')
 
     cpdef reserve(self, long size):
         """Resizes the internal data to required size.
         """
-        raise NotImplementedError, 'BaseArray::reserve'
+        raise NotImplementedError(BaseArray::reserve')
 
     cpdef resize(self, long size):
         """Resizes the array to the new size.
         """
-        raise NotImplementedError, 'BaseArray::resize'
+        raise NotImplementedError(BaseArray::resize)
 
     cpdef np.ndarray get_npy_array(self):
         """Returns a numpy array of the data: do not keep its reference.
@@ -234,22 +234,22 @@ cdef class BaseArray:
         elif s_dims[0] <= d_dims[0]:
             self._npy_array[:s_dims[0]] = nparr
         else:
-            raise ValueError, 'array size mismatch'
+            raise ValueError('array size mismatch')
 
     cpdef squeeze(self):
         """Release any unused memory.
         """
-        raise NotImplementedError, 'BaseArray::squeeze'
+        raise NotImplementedError('BaseArray::squeeze')
 
     cpdef remove(self, np.ndarray index_list, bint input_sorted=0, int stride=1):
         """Remove the particles with indices in index_list.
         """
-        raise NotImplementedError, 'BaseArray::remove'
+        raise NotImplementedError('BaseArray::remove')
 
     cpdef extend(self, np.ndarray in_array):
         """Extend the array with data from in_array.
         """
-        raise NotImplementedError, 'BaseArray::extend'
+        raise NotImplementedError('BaseArray::extend')
 
     cpdef align_array(self, LongArray new_indices, int stride=1):
         """Rearrange the array contents according to the new indices.
@@ -261,23 +261,23 @@ cdef class BaseArray:
     cpdef reset(self):
         """Reset the length of the array to 0.
         """
-        raise NotImplementedError, 'BaseArray::reset'
+        raise NotImplementedError('BaseArray::reset')
 
     cpdef copy_values(self, LongArray indices, BaseArray dest, int stride=1, int start=0):
         """Copy values of indexed particles from self to dest.
         """
-        raise NotImplementedError, 'BaseArray::copy_values'
+        raise NotImplementedError('BaseArray::copy_values')
 
     cpdef copy_subset(self, BaseArray source,
                       long start_index=-1, long end_index=-1, int stride=1):
         """Copy subset of values from source to self.
         """
-        raise NotImplementedError, 'BaseArray::copy_subset'
+        raise NotImplementedError('BaseArray::copy_subset')
 
     cpdef update_min_max(self):
         """Update the min and max values of the array.
         """
-        raise NotImplementedError, 'BaseArray::update_min_max'
+        raise NotImplementedError('BaseArray::update_min_max')
 
     def __len__(self):
         return self.length
