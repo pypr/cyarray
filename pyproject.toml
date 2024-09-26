@@ -6,3 +6,37 @@ requires = [
     "Cython",
     "mako"
 ]
+
+[project]
+name = "cyarray"
+dynamic = ["version"]
+readme = "README.rst"
+license = {file = "LICENSE.txt"}
+dependencies = ['numpy']
+description = "A fast, typed, resizable, Cython array."
+authors = [
+  {name = "Cyarray Developers", email = "pysph-dev@googlegroups.com"}
+]
+keywords = ["Cython", "array", "resizable"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: BSD License",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX",
+    "Operating System :: Unix",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Software Development :: Libraries",
+]
+
+[project.optional-dependencies]
+docs = ["sphinx"]
+tests = ["pytest", "pytest-benchmark[histogram]"]
+dev = ["sphinx", "pytest", "pytest-benchmark[histogram]", "cython"]
