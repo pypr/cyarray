@@ -12,6 +12,7 @@ type_info = [
 # To make changes modify the source templates (carray.pxd.mako) and regenerate
 # distutils: language=c++
 # cython: embedsignature=True, language_level=3
+# distutils: define_macros=NPY_NO_DEPRECATED_API=NPY_1_7_API_VERSION
 """
 Implementation of resizeable arrays of different types in Cython.
 
@@ -67,6 +68,10 @@ cdef extern from "numpy/arrayobject.h":
 
     np.ndarray PyArray_SimpleNewFromData(int, np.npy_intp*, int, void*)
 
+    void *PyArray_DATA(np.ndarray arr) noexcept nogil
+
+    np.npy_intp *PyArray_DIMS(np.ndarray arr) noexcept nogil
+
 
 # memcpy
 cdef extern from "stdlib.h":
@@ -77,7 +82,7 @@ cdef extern from "stdlib.h":
 cdef extern from *:
     """
     static void PyArray_SET_DATA(PyArrayObject *arr, char * data) {
-        arr->data = data;
+        ((PyArrayObject_fields *)arr)->data = data;
     }
     """
     void PyArray_SET_DATA(np.ndarray arr, char * data) noexcept nogil
@@ -171,9 +176,10 @@ cdef class BaseArray:
         pass
 
     cdef void c_reset(self) noexcept nogil:
-        cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
+        cdef np.npy_intp *dims
         self.length = 0
-        arr.dimensions[0] = self.length
+        dims = PyArray_DIMS(self._npy_array)
+        dims[0] = self.length
 
     cdef void c_resize(self, long size) noexcept nogil:
         pass
@@ -214,11 +220,19 @@ cdef class BaseArray:
         """
         cdef PyArrayObject* sarr = <PyArrayObject*>nparr
         cdef PyArrayObject* darr = <PyArrayObject*>self._npy_array
+        cdef np.npy_intp *s_dims, *d_dims
+        cdef void *s_data, *d_data
+    
+        s_data = PyArray_DATA(nparr)
+        d_data = PyArray_DATA(self._npy_array)
 
-        if sarr.data == darr.data:
+        s_dims = PyArray_DIMS(nparr)
+        d_dims = PyArray_DIMS(self._npy_array)
+
+        if s_data == d_data:
             return
-        elif sarr.dimensions[0] <= darr.dimensions[0]:
-            self._npy_array[:sarr.dimensions[0]] = nparr
+        elif s_dims[0] <= d_dims[0]:
+            self._npy_array[:s_dims[0]] = nparr
         else:
             raise ValueError, 'array size mismatch'
 
@@ -439,7 +453,7 @@ cdef class ${CLASSNAME}(BaseArray):
 
     cdef void c_append(self, ${ARRAY_TYPE} value) noexcept nogil:
         cdef long l = self.length
-        cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
+        cdef np.npy_intp *arr_dims
 
         if l >= self.alloc:
             self.c_reserve(l*2)
@@ -447,10 +461,10 @@ cdef class ${CLASSNAME}(BaseArray):
         self.length += 1
 
         # update the numpy arrays length
-        arr.dimensions[0] = self.length
+        arr_dims = PyArray_DIMS(self._npy_array)
+        arr_dims[0] = self.length
 
     cdef void c_reserve(self, long size) noexcept nogil:
-        cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
         cdef void* data = NULL
         if size > self.alloc:
             data = <${ARRAY_TYPE}*>aligned_realloc(
@@ -465,7 +479,7 @@ cdef class ${CLASSNAME}(BaseArray):
 
             self.data = <${ARRAY_TYPE}*>data
             self.alloc = size
-            arr.data = <char *>self.data
+            PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_reset(self) noexcept nogil:
         BaseArray.c_reset(self)
@@ -475,26 +489,29 @@ cdef class ${CLASSNAME}(BaseArray):
             PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     cdef void c_resize(self, long size) noexcept nogil:
-        cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
+        cdef np.npy_intp *arr_dims
 
         # reserve memory
         self.c_reserve(size)
 
         # update the lengths
         self.length = size
-        arr.dimensions[0] = self.length
+        arr_dims = PyArray_DIMS(self._npy_array)
+        arr_dims[0] = self.length
 
     cdef void c_set_view(self, ${ARRAY_TYPE} *array, long length) noexcept nogil:
         """Create a view of a given raw data pointer with given length.
         """
+        cdef np.npy_intp *arr_dims
+
         if self._old_data == NULL:
             self._old_data = self.data
 
         self.data = array
         self.length = length
-        cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
-        arr.data = <char *>self.data
-        arr.dimensions[0] = self.length
+        PyArray_SET_DATA(self._npy_array, <char *>self.data)
+        arr_dims = PyArray_DIMS(self._npy_array)
+        arr_dims[0] = self.length
 
     cdef void c_squeeze(self) noexcept nogil:
         cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
@@ -513,7 +530,7 @@ cdef class ${CLASSNAME}(BaseArray):
 
         self.data = <${ARRAY_TYPE}*>data
         self.alloc = size
-        arr.data = <char *>self.data
+        PyArray_SET_DATA(self._npy_array, <char *>self.data)
 
     ##### Python protocol ######################################
 
@@ -581,14 +598,16 @@ cdef class ${CLASSNAME}(BaseArray):
             itself.
 
         """
+        cdef np.npy_intp *arr_dims
+
         if self._parent is None:
             self._old_data = self.data
         self._parent = parent
         self.data = parent.data + start
         self.length = end - start
-        cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
-        arr.data = <char *>self.data
-        arr.dimensions[0] = self.length
+        PyArray_SET_DATA(self._npy_array, <char *>self.data)
+        arr_dims = PyArray_DIMS(self._npy_array)
+        arr_dims[0] = self.length
 
     cpdef squeeze(self):
         """Release any unused memory.
@@ -631,7 +650,7 @@ cdef class ${CLASSNAME}(BaseArray):
         cdef long inlength = index_list.size
         cdef np.ndarray sorted_indices
         cdef long id
-        cdef PyArrayObject* arr = <PyArrayObject*>self._npy_array
+        cdef np.npy_intp *arr_dims
 
         if inlength > self.length:
             return
@@ -654,7 +673,8 @@ cdef class ${CLASSNAME}(BaseArray):
                     for j in range(stride):
                         self.data[id + j] = self.data[self.length - stride + j]
                     self.length = self.length - stride
-        arr.dimensions[0] = self.length
+        arr_dims = PyArray_DIMS(self._npy_array)
+        arr_dims[0] = self.length
 
     cpdef extend(self, np.ndarray in_array):
         """Extend the array with data from in_array.
