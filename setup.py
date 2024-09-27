@@ -85,13 +85,6 @@ def setup_package():
     module = os.path.join('cyarray', '__init__.py')
     exec(compile(open(module).read(), module, 'exec'), info)
 
-    # The requirements.
-    install_requires = [
-        'numpy', 'mako', 'Cython', 'setuptools>=6.0'
-    ]
-    tests_require = ["pytest", "pytest-benchmark[histogram]"]
-    docs_require = ["sphinx"]
-
     ext_modules = get_basic_extensions()
     if MODE != 'info' and _is_cythonize_default():
         # Cython >= 0.25 uses cythonize to compile the extensions. This
@@ -128,12 +121,6 @@ def setup_package():
           ext_modules=ext_modules,
           include_package_data=True,
           cmdclass=cmdclass,
-          install_requires=install_requires,
-          extras_require={
-              "docs": docs_require,
-              "tests": tests_require,
-              "dev": docs_require + tests_require,
-          },
           zip_safe=False,
           platforms=['Linux', 'Mac OS-X', 'Unix', 'Windows'],
           classifiers=[c.strip() for c in """\
