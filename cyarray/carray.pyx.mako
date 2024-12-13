@@ -197,12 +197,12 @@ cdef class BaseArray:
     cpdef reserve(self, long size):
         """Resizes the internal data to required size.
         """
-        raise NotImplementedError(BaseArray::reserve')
+        raise NotImplementedError('BaseArray::reserve')
 
     cpdef resize(self, long size):
         """Resizes the array to the new size.
         """
-        raise NotImplementedError(BaseArray::resize)
+        raise NotImplementedError('BaseArray::resize')
 
     cpdef np.ndarray get_npy_array(self):
         """Returns a numpy array of the data: do not keep its reference.
