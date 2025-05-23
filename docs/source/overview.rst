@@ -56,6 +56,6 @@ In Python one may import and use the package as::
 Here ``a`` is an array of 10 integers.
 
 For more usage information, see the simple test cases in `test_carray.py
-<https://github.com/pypr/cyarray/blob/master/cyarray/tests/test_carray.py>`_.
+<https://github.com/pypr/cyarray/blob/main/cyarray/tests/test_carray.py>`_.
 
 Also see the reference documentation included here.
